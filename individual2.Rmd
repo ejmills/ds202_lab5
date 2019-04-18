@@ -72,7 +72,11 @@ ggplot(full, aes(x = LONGITUD, y = LATITUDE)) + geom_point()
 
 
 ```{r}
-full <- full %>% filter(STATE != 'alaska', STATE != 'hawaii')
+##########  you should try to fix this  ####################
+
+#full <- inner_join(full, counties, by = c('COUNTY' = 'group'))
+
+#full <- full %>% filter(region != 'alaska', region != 'hawaii')
 ```
 
 
