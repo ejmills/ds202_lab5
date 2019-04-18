@@ -1,0 +1,85 @@
+---
+title: "Individual 2"
+author: "Maxwell Farver"
+date: "April 17, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+
+acc <- read.csv("https://raw.githubusercontent.com/xdaiISU/ds202materials/master/hwlabs/fars2017/accident.csv", stringsAsFactors = FALSE)
+
+pers <- read.csv("https://raw.githubusercontent.com/xdaiISU/ds202materials/master/hwlabs/fars2017/person.csv", stringsAsFactors = FALSE)
+
+veh <- read.csv("https://raw.githubusercontent.com/xdaiISU/ds202materials/master/hwlabs/fars2017/vehicle.csv", stringsAsFactors = FALSE)
+```
+
+
+Part 1)
+```{r}
+table(acc$DAY_WEEK)
+table(acc$HOUR)
+```
+
+```{r}
+nrow(filter(acc, DRUNK_DR > 0))
+```
+
+
+Part 2)
+```{r}
+drivers <- filter(pers, PER_TYP == 1)
+```
+
+```{r}
+joined <- inner_join(acc, pers, by = c("STATE", "ST_CASE", "VE_FORMS", "COUNTY", "DAY", "MONTH", "HOUR", "MINUTE", "RUR_URB", "FUNC_SYS","HARM_EV", "MAN_COLL"))
+names(joined)
+```
+
+```{r}
+ggplot(data = joined, aes(DAY_WEEK)) + geom_bar() + facet_wrap(joined$HOUR)
+ggplot(data = joined, aes(DAY_WEEK)) + geom_bar() + facet_wrap(joined$SEX)
+```
+
+
+Part 3)
+```{r}
+library(readxl)
+glc <- readxl::read_xlsx("/home/max/Documents/Iowa State/DS_202/ds202_lab5/FRPP_GLCU.xlsx", skip = 1)
+```
+
+```{r}
+glc$`State Code` <- as.numeric(glc$`State Code`)
+
+glc$`County Code` <- as.numeric(glc$`County Code`)
+
+full <- left_join(joined, glc, by = c('STATE' = 'State Code', 'COUNTY' = 'County Code'))
+```
+
+```{r}
+library(maps)
+counties <- map_data("county")
+```
+
+```{r}
+ggplot(full, aes(x = LONGITUD, y = LATITUDE)) + geom_point()
+```
+
+
+```{r}
+full <- full %>% filter(STATE != 'alaska', STATE != 'hawaii')
+```
+
+
+```{r}
+counties %>% ggplot(aes(x = long, y = lat)) + 
+  geom_polygon(aes(group = group)) +
+  geom_point(aes(x=LONGITUD, y = LATITUDE), data = full) 
+```
+
+
