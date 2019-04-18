@@ -37,3 +37,16 @@ unique(acc$YEAR)
 ```
 
 There were 8769 accidents that involved at least one drunk driver in 2017. 
+
+Part two: Connecting data
+
+Joining the tables
+```{r}
+joined <- full_join(acc, pers, by = c("STATE", "ST_CASE", "VE_FORMS", "COUNTY", "DAY", "MONTH", "HOUR", "MINUTE", "RUR_URB", "FUNC_SYS","HARM_EV", "MAN_COLL"))
+names(joined)
+```
+
+```{r}
+ggplot(data = joined, aes(DAY_WEEK)) + geom_bar() + facet_wrap(joined$HOUR)
+ggplot(data = joined, aes(DAY_WEEK)) + geom_bar() + facet_wrap(joined$SEX)
+```
