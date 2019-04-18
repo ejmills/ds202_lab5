@@ -4,3 +4,36 @@ author: "Evan Mills"
 date: "April 17, 2019"
 output: html_document
 ---
+
+```{r}
+library(ggplot2)
+library(dplyr)
+
+acc <- read.csv("https://raw.githubusercontent.com/xdaiISU/ds202materials/master/hwlabs/fars2017/accident.csv", stringsAsFactors = FALSE)
+```
+
+```{r}
+pers <- read.csv("https://raw.githubusercontent.com/xdaiISU/ds202materials/master/hwlabs/fars2017/person.csv", stringsAsFactors = FALSE)
+```
+
+Part One: Acciednt Data
+```{r}
+ggplot(data = acc, aes(x = DAY_WEEK)) + geom_bar()
+```
+
+As you can see by the chart above accidents tend to happen on what we consider the weekend. That is days 6, 7, and 8 in the chart above.
+
+```{r}
+ggplot(data = acc, aes(x = HOUR), colour = HOUR) + geom_bar() + xlim(c(-1,25))
+```
+
+As you can see from the chat above the greatest number of accidents happens at hour 18 which equates to 6:00 pm. However the time period that accounts for most of the accidents is hour 14 to hour 22, which in non-24 hour time is 2:00 pm to 10:00 pm. This corrlates with the time period know as rush hour.
+```{r}
+dui <- acc %>% select(DRUNK_DR) %>% filter(DRUNK_DR >= 1)
+
+dim(dui)
+
+unique(acc$YEAR)
+```
+
+There were 8769 accidents that involved at least one drunk driver in 2017. 
