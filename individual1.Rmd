@@ -1,0 +1,6 @@
+---
+title: "Individual1"
+author: "Evan Mills"
+date: "April 17, 2019"
+output: html_document
+---
