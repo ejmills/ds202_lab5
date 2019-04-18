@@ -41,6 +41,9 @@ There were 8769 accidents that involved at least one drunk driver in 2017.
 
 
 Part two: Connecting data
+```{r}
+drivers <- filter(pers, PER_TYP == 1)
+```
 
 Joining the tables
 ```{r}
@@ -52,3 +55,51 @@ names(joined)
 ggplot(data = joined, aes(DAY_WEEK)) + geom_bar() + facet_wrap(joined$HOUR)
 ggplot(data = joined, aes(DAY_WEEK)) + geom_bar() + facet_wrap(joined$SEX)
 ```
+
+
+Part 3)
+```{r}
+library(readxl)
+glc <- readxl::read_xlsx("/home/max/Documents/Iowa State/DS_202/ds202_lab5/FRPP_GLCU.xlsx", skip = 1)
+```
+
+```{r}
+glc$`State Code` <- as.numeric(glc$`State Code`)
+
+glc$`County Code` <- as.numeric(glc$`County Code`)
+
+full <- left_join(joined, glc, by = c('STATE' = 'State Code', 'COUNTY' = 'County Code'))
+```
+
+```{r}
+library(maps)
+counties <- map_data("county")
+```
+
+```{r}
+##########  you should try to fix this  ####################
+
+
+full <- full %>% filter(LONGITUD < 0, LONGITUD > -130)
+
+full <- full %>% arrange(desc(COUNTY))
+```
+
+
+```{r}
+ggplot() +
+  geom_path(data=counties, aes(x =long, y=lat, group = group))
+  #geom_path(data=full, aes(x=LONGITUD, y=LATITUDE, group=STATE))
+```
+
+
+```{r}
+winter <- acc %>% filter(MONTH %in% c(1,2,12))
+
+summer <- acc %>% filter(MONTH %in% c(6,7,8))
+
+nrow(winter)
+nrow(summer)
+```
+
+As you can see from the numbers above, there surprisingly tends to be more accidents in Summer than in Winter. This could be due to more people enjoying the weather and drinking more, or driving faster due to feeling more confident on the road.

@@ -37,7 +37,7 @@ drivers <- filter(pers, PER_TYP == 1)
 ```
 
 ```{r}
-joined <- inner_join(acc, pers, by = c("STATE", "ST_CASE", "VE_FORMS", "COUNTY", "DAY", "MONTH", "HOUR", "MINUTE", "RUR_URB", "FUNC_SYS","HARM_EV", "MAN_COLL"))
+joined <- full_join(acc, pers, by = c("STATE", "ST_CASE", "VE_FORMS", "COUNTY", "DAY", "MONTH", "HOUR", "MINUTE", "RUR_URB", "FUNC_SYS","HARM_EV", "MAN_COLL"))
 names(joined)
 ```
 
@@ -67,23 +67,28 @@ counties <- map_data("county")
 ```
 
 ```{r}
-ggplot(full, aes(x = LONGITUD, y = LATITUDE)) + geom_point()
-```
-
-
-```{r}
 ##########  you should try to fix this  ####################
 
-#full <- inner_join(full, counties, by = c('COUNTY' = 'group'))
 
-#full <- full %>% filter(region != 'alaska', region != 'hawaii')
+full <- full %>% filter(LONGITUD < 0, LONGITUD > -130)
+
+full <- full %>% arrange(desc(COUNTY))
 ```
 
 
 ```{r}
-counties %>% ggplot(aes(x = long, y = lat)) + 
-  geom_polygon(aes(group = group)) +
-  geom_point(aes(x=LONGITUD, y = LATITUDE), data = full) 
+ggplot() +
+  geom_path(data=counties, aes(x =long, y=lat, group = group))
+  #geom_path(data=full, aes(x=LONGITUD, y=LATITUDE, group=STATE))
 ```
 
+```{r}
+winter <- acc %>% filter(MONTH %in% c(1,2,12))
 
+summer <- acc %>% filter(MONTH %in% c(6,7,8))
+
+nrow(winter)
+nrow(summer)
+```
+
+As you can see from the numbers above, there surprisingly tends to be more accidents in Summer than in Winter. This could be due to more people enjoying the weather and drinking more, or driving faster due to feeling more confident on the road.
